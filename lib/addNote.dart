@@ -16,6 +16,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
   late final TextEditingController _contentController;
   late final TextEditingController _tagsController;
   late final TextEditingController _taskController;
+  DateTime? _selectedDateTime;
   late List<String> _tags;
   late bool _isTodo;
   late List<Task> _tasks;
@@ -98,6 +99,22 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             const SizedBox(height: 10),
             _buildTagChips(),
             const SizedBox(height: 30),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: _pickDateTime,
+                  child: Text("Pick Date & Time"),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  _selectedDateTime == null
+                      ? 'No time set'
+                      : '${_selectedDateTime!.toLocal()}'.split('.').first,
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _saveNote,
               style: ElevatedButton.styleFrom(
@@ -117,6 +134,35 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     );
   }
 
+  Future<void> _pickDateTime() async {
+    final DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: _selectedDateTime ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (date != null) {
+      final TimeOfDay? time = await showTimePicker(
+        context: context,
+        initialTime:
+            TimeOfDay.fromDateTime(_selectedDateTime ?? DateTime.now()),
+      );
+
+      if (time != null) {
+        setState(() {
+          _selectedDateTime = DateTime(
+            date.year,
+            date.month,
+            date.day,
+            time.hour,
+            time.minute,
+          );
+        });
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -125,6 +171,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     _contentController = TextEditingController(text: note?.content ?? '');
     _tagsController = TextEditingController();
     _taskController = TextEditingController();
+    _selectedDateTime = widget.noteToEdit?.date ?? DateTime.now();
     _tags = note?.tags.toList() ?? [];
     _isTodo = note?.isTodo ?? false;
     _tasks = note?.tasks
@@ -164,7 +211,6 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       return;
     }
 
-
     // Routes for Update note or Add note
     final updatedNote = widget.noteToEdit?.copyWith(
           title: _titleController.text,
@@ -172,7 +218,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           tags: _tags,
           isTodo: _isTodo,
           tasks: _tasks,
-          date: DateTime.now(),
+          date: _selectedDateTime,
         ) ??
         Note(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -199,7 +245,8 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           .map((tag) => Chip(
                 label: Text(tag),
                 onDeleted: () => setState(() => _tags.remove(tag)),
-              )).toList(),
+              ))
+          .toList(),
     );
   }
 
@@ -239,9 +286,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
           controller: _taskController,
           decoration: InputDecoration(
             labelText: 'Add new task',
-            labelStyle: TextStyle(
-              fontWeight: FontWeight.bold
-            ),
+            labelStyle: TextStyle(fontWeight: FontWeight.bold),
             suffixIcon: IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
