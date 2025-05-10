@@ -57,33 +57,28 @@ class _HomeScreenState extends State<HomeScreen> {
       }
       final int notificationId = note.id.hashCode;
 
-      if (note.date != null) {
-        final DateTime dueDateTime = note.date!;
-        final DateTime notificationTime =
-            dueDateTime.subtract(const Duration(minutes: 10));
+      final DateTime dueDateTime = note.date!;
+      final DateTime notificationTime =
+          dueDateTime.subtract(const Duration(minutes: 10));
 
-        if (notificationTime.isAfter(now)) {
-          AwesomeNotifications().createNotification(
-            content: NotificationContent(
-              id: notificationId,
-              channelKey: 'basic_channel',
-              title: 'Reminder: ${note.title}',
-              body:
-                  'Due at ${dueDateTime.hour.toString().padLeft(2, '0')}:${dueDateTime.minute.toString().padLeft(2, '0')}. Tap to see details.',
-              notificationLayout: NotificationLayout.Default,
-              category: NotificationCategory.Reminder,
-              payload: {'noteId': note.id},
-            ),
-            schedule: NotificationCalendar.fromDate(
-              date: notificationTime,
-              allowWhileIdle: true,
-            ),
-          );
-          scheduledCount++;
-        } else {
-          AwesomeNotifications().cancel(notificationId);
-          cancelledCount++;
-        }
+      if (notificationTime.isAfter(now)) {
+        AwesomeNotifications().createNotification(
+          content: NotificationContent(
+            id: notificationId,
+            channelKey: 'basic_channel',
+            title: 'Reminder: ${note.title}',
+            body:
+                'Due at ${dueDateTime.hour.toString().padLeft(2, '0')}:${dueDateTime.minute.toString().padLeft(2, '0')}. Tap to see details.',
+            notificationLayout: NotificationLayout.Default,
+            category: NotificationCategory.Reminder,
+            payload: {'noteId': note.id},
+          ),
+          schedule: NotificationCalendar.fromDate(
+            date: notificationTime,
+            allowWhileIdle: true,
+          ),
+        );
+        scheduledCount++;
       } else {
         AwesomeNotifications().cancel(notificationId);
         cancelledCount++;
@@ -175,8 +170,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.note_add_outlined,
-                          size: 80, color: Colors.grey),
+                      Icon(
+                        Icons.note_add_outlined,
+                        size: 80,
+                        color: Colors.grey,
+                      ),
                       SizedBox(height: 16),
                       Text(
                         'No notes yet!',
@@ -285,34 +283,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: note.tasks
-                      .map((task) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 2.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  task.completed
-                                      ? Icons.check_box
-                                      : Icons.check_box_outline_blank,
-                                  size: 20,
-                                  color: Colors.black87,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Text(
-                                    task.description,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black.withOpacity(0.85),
-                                      decoration: task.completed
-                                          ? TextDecoration.lineThrough
-                                          : TextDecoration.none,
-                                    ),
+                      .map(
+                        (task) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                task.completed
+                                    ? Icons.check_box
+                                    : Icons.check_box_outline_blank,
+                                size: 20,
+                                color: Colors.black87,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  task.description,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black.withOpacity(0.85),
+                                    decoration: task.completed
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
                                   ),
                                 ),
-                              ],
-                            ),
-                          ))
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
                       .toList(),
                 ),
               )
@@ -347,21 +347,20 @@ class _HomeScreenState extends State<HomeScreen> {
                     .toList(),
               ),
             const SizedBox(height: 10),
-            if (note.date != null)
-              Row(
-                children: [
-                  const Icon(Icons.alarm, color: Colors.black87, size: 18),
-                  const SizedBox(width: 6),
-                  Text(
-                    getRemainingTime(note.date!),
-                    style: const TextStyle(
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
+            Row(
+              children: [
+                const Icon(Icons.alarm, color: Colors.black87, size: 18),
+                const SizedBox(width: 6),
+                Text(
+                  getRemainingTime(note.date!),
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
                   ),
-                ],
-              ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
