@@ -3,7 +3,7 @@
 A notes application built with **Flutter** and **Hive** for local data storage.
 
 ## Features
-- Responive & Modern UI that's easy to use.
+- Responsive & Modern UI that's easy to use.
 - Using features like listview, card, and more.
 - The app will help you add your notes or to-do lists.
 - CRUD Operations.
