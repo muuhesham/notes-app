@@ -99,20 +99,23 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             const SizedBox(height: 10),
             _buildTagChips(),
             const SizedBox(height: 30),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: _pickDateTime,
-                  child: Text("Pick Date & Time"),
-                ),
-                const SizedBox(width: 10),
-                Text(
-                  _selectedDateTime == null
-                      ? 'No time set'
-                      : '${_selectedDateTime!.toLocal()}'.split('.').first,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ],
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: _pickDateTime,
+                    child: Text("Pick Date & Time"),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    _selectedDateTime == null
+                        ? 'No time set'
+                        : '${_selectedDateTime!.toLocal()}'.split('.').first,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
